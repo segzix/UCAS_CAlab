@@ -73,6 +73,7 @@ module mycpu_top(
     wire [32:0] WB_vaddr;
     wire ID_br_stall;
     wire MEM_mem_req;
+    wire wb_ex;
     //IF
     IF_stage IF_stage(
         .clk (clk),
@@ -202,7 +203,8 @@ module mycpu_top(
         .wb_ecode (wb_ecode),
         .wb_esubcode(wb_esubcode),
         .WB_pc (WB_pc),
-        .WB_vaddr (WB_vaddr)
+        .WB_vaddr (WB_vaddr),
+        .wb_ex(wb_ex)
     );
     csr_regfile u_csr(
         .clk (clk),
@@ -217,7 +219,7 @@ module mycpu_top(
         .ex_entry (ex_entry),
         .ertn_entry (ertn_entry),
         .ertn_flush (ertn_flush),
-        .wb_ex (WB_exception),
+        .wb_ex (wb_ex),
         .wb_pc (WB_pc),
         .wb_ecode (wb_ecode),
         .wb_esubcode (wb_esubcode),

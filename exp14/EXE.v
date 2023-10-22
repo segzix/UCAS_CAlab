@@ -135,7 +135,7 @@ module EXE_stage(
     assign EXE_alu_result_merge = EXE_res_from_mul ?  EXE_mul_res : EXE_alu_result;      
     alu u_alu(
         .clk        (clk),
-        .reset      (reset | WB_exception),//
+        .reset      (reset | WB_exception | ~EXE_valid),//
         .alu_op     (EXE_alu_op),
         .alu_src1   (EXE_alu_src1),
         .alu_src2   (EXE_alu_src2),

@@ -26,7 +26,8 @@ module WB_stage(
     output wire [5:0] wb_ecode,
     output wire [8:0] wb_esubcode,
     output wire [31:0] WB_pc,
-    output wire [31:0] WB_vaddr
+    output wire [31:0] WB_vaddr,
+    output wire wb_ex
 );
     reg [190:0] MEM_to_WB_bus_r;
     reg WB_valid;
@@ -36,18 +37,19 @@ module WB_stage(
     always @(posedge clk) begin
         if(reset) begin
             WB_valid <= 1'd0;
-        end else if(WB_exception | ertn_flush) begin
+        end else if(WB_exception || ertn_flush) begin
             WB_valid <= 1'd0;
         end else if(WB_allow) begin
             WB_valid <= MEM_to_WB_valid;
         end
+
         if(reset) begin
             MEM_to_WB_bus_r <= 191'd0;
         end else if(MEM_to_WB_valid && WB_allow) begin
             MEM_to_WB_bus_r <= MEM_to_WB_bus;
-        end else begin
+        end /*else begin
             MEM_to_WB_bus_r <= 191'd0;
-        end
+        end*/
     end
     
     wire WB_csr_re;
@@ -100,8 +102,9 @@ module WB_stage(
     assign csr_we = WB_csr_we & WB_valid;
     assign csr_wmask = WB_csr_wmask & {32{WB_valid}};
     assign csr_wvalue = WB_csr_wvalue & {32{WB_valid}};
-    assign ertn_flush = WB_inst_ertn;
-    assign WB_exception = (WB_inst_syscall | WB_inst_break | WB_except_ine | WB_except_int | WB_pc_adef | WB_except_ale | WB_inst_ertn) & WB_valid;
+    assign ertn_flush = WB_inst_ertn && WB_valid;
+    assign WB_exception = (WB_inst_syscall | WB_inst_break | WB_except_ine | WB_except_int | WB_pc_adef | WB_except_ale | WB_inst_ertn) && WB_valid;
+    assign wb_ex = (WB_inst_syscall | WB_inst_break | WB_except_ine | WB_except_int | WB_pc_adef | WB_except_ale) && WB_valid;
     assign wb_ecode =  WB_except_int  ? 6'h00 :
                        WB_pc_adef     ? 6'h08 :
                        WB_except_ale  ? 6'h09 :

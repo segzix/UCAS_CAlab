@@ -1,4 +1,4 @@
-//ID级的修改在于要生成br_stall信号，其作用在在于告知pre_IF不要生成错误的next_pc,修改处在29 458 459 482
+//ID锟斤拷锟斤拷锟睫革拷锟斤拷锟斤拷要锟斤拷锟斤拷br_stall锟脚号ｏ拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟节革拷知pre_IF锟斤拷要锟斤拷锟缴达拷锟斤拷锟絥ext_pc,锟睫改达拷锟斤拷29 458 459 482
 module ID_stage(
     input wire clk,
     input wire reset,
@@ -256,7 +256,7 @@ module ID_stage(
     wire [ 4:0] rf_waddr;
     wire [31:0] rf_wdata;
     
-    //分解
+    //锟街斤拷
     assign op_31_26  = ID_inst[31:26];
     assign op_25_22  = ID_inst[25:22];
     assign op_21_20  = ID_inst[21:20];
@@ -482,7 +482,7 @@ module ID_stage(
                     | inst_jirl
                     | inst_bl
                     | inst_b
-                    ) && ID_valid && ~ID_br_stall;
+                    ) && ID_valid && ID_go && EXE_allow;
     /**assign branch_pc = (inst_beq || inst_bne || inst_bl || inst_b) ? (ID_pc + br_offs) :
                                                                      (rj_value + jirl_offs);**/
      assign branch_pc = (inst_beq || inst_bne || inst_bl || inst_b || inst_bge || inst_bgeu || inst_blt || inst_bltu) ? (ID_pc + br_offs) :
